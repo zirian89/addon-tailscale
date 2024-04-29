@@ -56,6 +56,18 @@ configuration:
       This option allows you to configure the port the Tailscale Proxy and Funnel
       features are accessible on.
       Only port number 443, 8443 and 10000 is allowed by Tailscale.
+  reverse_proxy:
+    name: Reverse Proxy
+    description: >-
+      This option allows you to enable Tailscales reverse Proxy feature on Ports 8443 and 10000.
+  proxy_8443:
+    name: Serve Port 8443 on
+    description: >-
+      This option specifies the local service url that will be served on port 8443
+  proxy_10000:
+    name: Serve Port 10000 on
+    desciption: >-
+      This option specifies the local service url that will be served on port 10000
   snat_subnet_routes:
     name: Source NAT subnet routes
     description: >-
