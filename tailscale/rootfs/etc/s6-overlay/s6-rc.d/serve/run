@@ -70,4 +70,4 @@ if bashio::config.true 'reverse_proxy'; then
   exec /opt/tailscale ${tailscale_command} --https=8443 --set-path=/ $(bashio::config "proxy_8443")
   exec /opt/tailscale ${tailscale_command} --https=10000 --set-path=/ $(bashio::config "proxy_10000")
 fi
-echo hi hello
+echo "hi hello"
