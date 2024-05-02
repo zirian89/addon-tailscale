@@ -63,7 +63,7 @@ else
 fi
 
 # Set up serve
-exec /opt/tailscale ${tailscale_command} --https=$(bashio::config "proxy_and_funnel_port" "443") --set-path=/ "http://127.0.0.1:$(bashio::core.port)"
+exec /opt/tailscale ${tailscale_command} --https=$(bashio::config "proxy_and_funnel_port" "443") --set-path=/ "http://127.0.0.1:8822"
 
 if bashio::config.true 'reverse_proxy'; then
   echo "The code is executed"
