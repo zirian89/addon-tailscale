@@ -1,6 +1,6 @@
 ---
 name: Tailscale vanced
-version: "0.5.1"
+version: "0.5.0"
 slug: tailscale
 description: Zero config VPN for building secure networks with reverse proxy support
 url: https://github.com/zirian89/addon-tailscale
@@ -36,7 +36,6 @@ schema:
   login_server: url?
   proxy: bool?
   proxy_and_funnel_port: match(^(443|8443|10000)$)?
-  reverse_proxy: bool?
   proxy_8443: url?
   proxy_10000: url?
   snat_subnet_routes: bool?
