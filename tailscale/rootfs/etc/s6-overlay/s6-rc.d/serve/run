@@ -67,6 +67,7 @@ if bashio::config.is_empty "proxy_8443"; then
   echo "proxy 8443 is empty with bashio value $(bashio::config.is_empty "proxy_8443")"
 else
   echo "proxy 8443 is not empty with value $(bashio::config "proxy_8443")"
+fi
 
 
 if ! [bashio::config.is_empty "proxy_8443"] && [bashio::config.true "funnel"]; then
