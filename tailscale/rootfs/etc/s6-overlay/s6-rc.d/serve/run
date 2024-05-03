@@ -62,9 +62,19 @@ else
   tailscale_command=funnel
 fi
 
+
+if bashio::config.is_empty "proxy_8443"; then
+  echo "8443 is empty"
+else
+  echo $(bashio::config "proxy_8443")
+
+if bashio::config.is_empty "proxy_10000"; then
+  echo "10000 is empty"
+else
+  echo $(bashio::config "proxy_10000")
+
+
 # Set up serve
-
-
 exec /opt/tailscale ${tailscale_command} --https=$(bashio::config "proxy_and_funnel_port" "443") --set-path=/ "http://127.0.0.1:$(bashio::core.port)"
 
 
