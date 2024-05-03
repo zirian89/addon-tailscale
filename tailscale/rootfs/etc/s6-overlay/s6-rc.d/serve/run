@@ -89,7 +89,7 @@ if !  bashio::config.is_empty "proxy_10000"  &&  bashio::config.true "funnel"  ;
       exec /opt/tailscale ${tailscale_command} --bg --https=10000 --set-path=/ $(bashio::config "proxy_10000")
     fi
   else
-    exec /opt/tailscale ${tailscale_command} --https=10000 --set-path=/ $(bashio::config "proxy_10000")
+    exec /opt/tailscale ${tailscale_command} --bg --https=10000 --set-path=/ $(bashio::config "proxy_10000")
   fi  
 fi
 
