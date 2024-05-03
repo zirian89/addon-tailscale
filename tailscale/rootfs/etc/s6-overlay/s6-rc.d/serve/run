@@ -71,7 +71,7 @@ else
 fi
 
 
-if  [ ! bashio::config.is_empty "proxy_8443" ] && [ bashio::config.true "funnel" ] ; then
+if  ! [ bashio::config.is_empty "proxy_8443" ] && [ bashio::config.true "funnel" ] ; then
   if [ /opt/tailscale status | grep -q "net:8443" ] ; then
     if ! [ /opt/tailscale funnel status | grep -q "$(bashio::config "proxy_8443")" ] ; then
       /opt/tailscale funnel -https=8443 off
@@ -82,7 +82,7 @@ if  [ ! bashio::config.is_empty "proxy_8443" ] && [ bashio::config.true "funnel"
   fi  
 fi
 
-if  [ ! bashio::config.is_empty "proxy_10000" ] && [ bashio::config.true "funnel" ] ; then
+if ! [ bashio::config.is_empty "proxy_10000" ] && [ bashio::config.true "funnel" ] ; then
   if [ /opt/tailscale status | grep -q "net:10000" ] ; then
     if ! [ /opt/tailscale funnel status | grep -q "$(bashio::config "proxy_10000")" ] ; then
       /opt/tailscale funnel -https=10000 off
