@@ -68,9 +68,9 @@ if ! [bashio::config.is_empty "proxy_8443"] && [bashio::config.true "funnel"]; t
       /opt/tailscale funnel -https=8443 off
       exec /opt/tailscale ${tailscale_command} --bg --https=8443 --set-path=/ $(bashio::config "proxy_8443")
     fi
+  else
+    exec /opt/tailscale ${tailscale_command} --bg --https=8443 --set-path=/ $(bashio::config "proxy_8443") 
   fi  
-else
-  exec /opt/tailscale ${tailscale_command} --bg --https=8443 --set-path=/ $(bashio::config "proxy_8443")
 fi
 
 if ! [bashio::config.is_empty "proxy_10000"] && [bashio::config.true "funnel"]; then
@@ -79,9 +79,9 @@ if ! [bashio::config.is_empty "proxy_10000"] && [bashio::config.true "funnel"]; 
       /opt/tailscale funnel -https=10000 off
       exec /opt/tailscale ${tailscale_command} --bg --https=10000 --set-path=/ $(bashio::config "proxy_10000")
     fi
+  else
+    exec /opt/tailscale ${tailscale_command} --https=10000 --set-path=/ $(bashio::config "proxy_10000")
   fi  
-else
-  exec /opt/tailscale ${tailscale_command} --https=10000 --set-path=/ $(bashio::config "proxy_10000")
 fi
 
 # Set up serve
