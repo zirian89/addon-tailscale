@@ -24,3 +24,12 @@ elif [[ "${exit_code_service}" -ne 0 ]]; then
   fi
   exec /run/s6/basedir/bin/halt
 fi
+
+if /opt/tailscale funnel status | grep -q "net:8443"; then
+  echo "removing funnel on port 8443"
+  /opt/tailscale funnel -https=8443 off
+fi
+if /opt/tailscale funnel status | grep -q "net:10000"; then
+  echo "removing funnel on port 10000"
+  /opt/tailscale funnel -https=10000 off
+fi
