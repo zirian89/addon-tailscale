@@ -27,9 +27,9 @@ fi
 
 if /opt/tailscale funnel status | grep -q "net:8443"; then
   echo "removing funnel on port 8443"
-  /opt/tailscale funnel -https=8443 off
+  /opt/tailscale funnel --https=8443 off
 fi
 if /opt/tailscale funnel status | grep -q "net:10000"; then
   echo "removing funnel on port 10000"
-  /opt/tailscale funnel -https=10000 off
+  /opt/tailscale funnel --https=10000 off
 fi
