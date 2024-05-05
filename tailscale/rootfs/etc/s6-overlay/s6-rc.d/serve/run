@@ -66,8 +66,7 @@ fi
 if  ! bashio::config.is_empty "proxy_8443"  &&  bashio::config.true "funnel"  ; then
   if  /opt/tailscale status | grep -q "net:8443"  ; then
     if !  /opt/tailscale funnel status | grep -q "$(bashio::config "proxy_8443")"  ; then
-      echo "Removing port 8443 funnel"
-      /opt/tailscale funnel -https=8443 off
+      /opt/tailscale funnel --https=8443 off
       exec /opt/tailscale ${tailscale_command} --bg --https=8443 --set-path=/ $(bashio::config "proxy_8443")
     fi
   else
@@ -78,8 +77,7 @@ fi
 if !  bashio::config.is_empty "proxy_10000"  &&  bashio::config.true "funnel"  ; then
   if  /opt/tailscale status | grep -q "net:10000"  ; then
     if !  /opt/tailscale funnel status | grep -q "$(bashio::config "proxy_10000")"  ; then
-      echo "Removing port 10000 funnel"
-      /opt/tailscale funnel -https=10000 off
+      /opt/tailscale funnel --https=10000 off
       exec /opt/tailscale ${tailscale_command} --bg --https=10000 --set-path=/ $(bashio::config "proxy_10000")
     fi
   else
