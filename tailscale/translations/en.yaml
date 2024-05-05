@@ -57,11 +57,11 @@ configuration:
       features are accessible on.
       Only port number 443, 8443 and 10000 is allowed by Tailscale.
   proxy_8443:
-    name: Serve Port 8443 on
+    name: Funnel on port 8443
     description: >-
       This option specifies the local service url that will be served on port 8443
   proxy_10000:
-    name: Serve Port 10000 on
+    name: Funnel on port 10000
     desciption: >-
       This option specifies the local service url that will be served on port 10000
   snat_subnet_routes:
