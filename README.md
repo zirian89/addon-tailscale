@@ -97,6 +97,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+Vanced Specific
+- added the repository.yaml file
+- modified the https://github.com/zirian89/addon-tailscale/blob/main/tailscale/rootfs/etc/s6-overlay/s6-rc.d/web/run file to include a different port
+- modified the addon-tailscale/tailscale/rootfs/etc/s6-overlay/s6-rc.d/serve/run file to include the funnel createion process
+- modified the tailscale/config.yaml file to include the new configuration options
+- modified the tailscale/rootfs/etc/s6-overlay/s6-rc.d/tailscaled/run file to change the state directory and file name
+
+
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
 [armhf-shield]: https://img.shields.io/badge/armhf-no-red.svg
