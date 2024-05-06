@@ -8,8 +8,8 @@ declare -a options
 
 bashio::log.info 'Starting Tailscale...'
 
-options+=(--state=/data/tailscaled.state)
-options+=(--statedir=/data/state)
+options+=(--state=/data/tailscaled-vanced.state)
+options+=(--statedir=/data/state-vanced)
 
 # Opt out of client log upload to log.tailscale.io
 if ! bashio::debug ; then
