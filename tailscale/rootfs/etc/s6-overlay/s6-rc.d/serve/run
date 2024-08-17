@@ -85,10 +85,10 @@ fi
 #  fi  
 #fi
 
-exec /opt/tailscale funnel --https=8443 off
 exec /opt/tailscale funnel status
-exec /opt/tailscale ${tailscale_command} --bg --https=8443 --set-path=/ $(bashio::config "proxy_8443")
 exec /opt/tailscale ${tailscale_command} --bg --https=10000 --set-path=/ $(bashio::config "proxy_10000")
 exec /opt/tailscale serve --bg --yes=true --https=10000 --set-path=/graf/ http://127.0.0.1:3000
+exec /opt/tailscale ${tailscale_command} --bg --https=8443 --set-path=/ $(bashio::config "proxy_8443")
+
 # Set up serve
 exec /opt/tailscale ${tailscale_command} --https=$(bashio::config "proxy_and_funnel_port" "443") --set-path=/ "http://127.0.0.1:$(bashio::core.port)"
