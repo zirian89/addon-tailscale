@@ -62,35 +62,13 @@ else
   tailscale_command=funnel
 fi
 
-
-#if  ! bashio::config.is_empty "proxy_8443"  &&  bashio::config.true "funnel"  ; then
-#  if  exec /opt/tailscale status | grep -q "net:8443"  ; then
-#    if !  exec /opt/tailscale funnel status | grep -q "$(bashio::config "proxy_8443")"  ; then
-#      exec /opt/tailscale funnel --https=8443 off
-#      exec /opt/tailscale ${tailscale_command} --bg --https=8443 --set-path=/ $(bashio::config "proxy_8443")
-#    fi
-#  else
-#    exec /opt/tailscale ${tailscale_command} --bg --https=8443 --set-path=/ $(bashio::config "proxy_8443") 
-#  fi  
-#fi
-
-#if !  bashio::config.is_empty "proxy_10000"  &&  bashio::config.true "funnel"  ; then
-#  if  exec /opt/tailscale status | grep -q "net:10000"  ; then
-#    if !  exec /opt/tailscale funnel status | grep -q "$(bashio::config "proxy_10000")"  ; then
-#      exec /opt/tailscale funnel --https=10000 off
-#      exec /opt/tailscale ${tailscale_command} --bg --https=10000 --set-path=/ $(bashio::config "proxy_10000")
-#    fi
-#  else
-#    exec /opt/tailscale ${tailscale_command} --bg --https=10000 --set-path=/ $(bashio::config "proxy_10000")
-#  fi  
-#fi
-
 exec /opt/tailscale ${tailscale_command} --bg --https=10000 --set-path=/ $(bashio::config "proxy_10000")
 bashio::log.info "funnel on port 10000 is up"
 exec /opt/tailscale serve --bg --yes=true --https=10000 --set-path=/graf/ http://127.0.0.1:3000
 bashio::log.info "serve on port 10000 is up"
 exec /opt/tailscale ${tailscale_command} --bg --https=8443 --set-path=/ $(bashio::config "proxy_8443")
 bashio::log.info "funnel on port 8443 is up"
+
 
 # Set up serve
 exec /opt/tailscale ${tailscale_command} --https=$(bashio::config "proxy_and_funnel_port" "443") --set-path=/ "http://127.0.0.1:$(bashio::core.port)"
