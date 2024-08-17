@@ -62,13 +62,6 @@ else
   tailscale_command=funnel
 fi
 
-exec /opt/tailscale funnel status
-exec /opt/tailscale ${tailscale_command} --bg=true --https=10000 --set-path=/ $(bashio::config "proxy_10000")
-echo "port 10000 is funneled"
-# exec /opt/tailscale ${tailscale_command} --bg=true --https=10000 --set-path=/graf/ http://127.0.0.1:3000
-exec /opt/tailscale ${tailscale_command} --bg=true --https=8443 --set-path=/ $(bashio::config "proxy_8443")
-echo "port 8443 is funneled"
-
 
 # Set up serve
 exec /opt/tailscale ${tailscale_command} --https=$(bashio::config "proxy_and_funnel_port" "443") --set-path=/ "http://127.0.0.1:$(bashio::core.port)"
