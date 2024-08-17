@@ -88,9 +88,3 @@ exec /opt/tailscale serve --bg --yes --https=10000 --set-path=/graf/ http://127.
 # Set up serve
 exec /opt/tailscale ${tailscale_command} --https=$(bashio::config "proxy_and_funnel_port" "443") --set-path=/ "http://127.0.0.1:$(bashio::core.port)"
 
-if bashio::config.true 'reverse_proxy'; then
-  echo "The code is executed"
-  exec /opt/tailscale ${tailscale_command} --https=8443 --set-path=/ $(bashio::config "proxy_8443")
-  exec /opt/tailscale ${tailscale_command} --https=10000 --set-path=/ $(bashio::config "proxy_10000")
-fi
-echo $(bashio::config.true 'reverse_proxy')
