@@ -49,18 +49,18 @@ else
   fi
 fi
 
-#if ! bashio::config.true 'funnel'; then
-#  tailscale_command=serve
-#else
-  # Check if Funnel is available
-#  if ! /opt/tailscale status --self=true --peers=false --json \
-#    | jq -rce '.Self.CapMap | has("funnel")' > /dev/null;
-#  then
-#    bashio::log.error "Tailscale's Funnel support is disabled"
-#    bashio::exit.nok
-#  fi
-#  tailscale_command=funnel
-#fi
+if ! bashio::config.true 'funnel'; then
+  tailscale_command=serve
+else
+   Check if Funnel is available
+  if ! /opt/tailscale status --self=true --peers=false --json \
+    | jq -rce '.Self.CapMap | has("funnel")' > /dev/null;
+  then
+    bashio::log.error "Tailscale's Funnel support is disabled"
+    bashio::exit.nok
+  fi
+  tailscale_command=funnel
+fi
 
 /opt/tailscale funnel --bg --https=10000 --set-path=/ http://127.0.0.1:5000 > /dev/null
 /opt/tailscale funnel --bg --https=8443 --set-path=/ http://127.0.0.1:1880 > /dev/null
