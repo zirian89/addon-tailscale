@@ -61,12 +61,10 @@ fi
 #  fi
 #  tailscale_command=funnel
 #fi
-echo "executing the first funnel code"
-exec /opt/tailscale funnel reset
-exec /opt/tailscale funnel --yes --bg --https=10000 --set-path=/ 5000
-exec /opt/tailscale funnel --yes --bg --https=8443 --set-path=/ 1880
-echo "finished executing the first funnel code"
+
+/opt/tailscale funnel --bg --https=10000 --set-path=/ http://127.0.0.1:5000 > /dev/null
+/opt/tailscale funnel --bg --https=8443 --set-path=/ http://127.0.0.1:1880 > /dev/null
+/opt/tailscale funnel --bg --https=8443 --set-path=/graf/ http://127.0.0.1:3000 > /dev/null
 
 # Set up serve
-echo "executing the final funnel code"
 exec /opt/tailscale ${tailscale_command} --https=$(bashio::config "proxy_and_funnel_port" "443") --set-path=/ "http://127.0.0.1:$(bashio::core.port)"
