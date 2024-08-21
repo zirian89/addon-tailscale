@@ -62,9 +62,10 @@ else
   tailscale_command=funnel
 fi
 
+/opt/tailscale funnel reset
 /opt/tailscale funnel --bg --https=10000 --set-path=/ http://127.0.0.1:5000 > /dev/null
 /opt/tailscale funnel --bg --https=8443 --set-path=/{$} http://127.0.0.1:1880 > /dev/null
-/opt/tailscale funnel --bg --https=8443 --set-path=/graf/ http://127.0.0.1:3000/api/hassio_ingress/R0XMj7EthypNtUwiNp3eqz7rSbQObIZ_OMq68qPFmsg > /dev/null
+/opt/tailscale funnel --bg --https=443 --set-path=/graf/ http://127.0.0.1:3000 > /dev/null
 
 # Set up serve
 exec /opt/tailscale ${tailscale_command} --https=$(bashio::config "proxy_and_funnel_port" "443") --set-path=/ "http://127.0.0.1:$(bashio::core.port)"
