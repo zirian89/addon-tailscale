@@ -62,9 +62,6 @@ else
   tailscale_command=funnel
 fi
 
-/opt/tailscale funnel --bg --https=10000 --set-path=/ http://127.0.0.1:5000 off > /dev/null
-/opt/tailscale funnel --bg --https=8443 --set-path=/{$} http://127.0.0.1:1880 off > /dev/null
-/opt/tailscale funnel --bg --https=443 --set-path=/graf/ http://127.0.0.1:3000 off > /dev/null
 
 /opt/tailscale funnel --bg --https=10000 --set-path=/ http://127.0.0.1:5000 > /dev/null
 /opt/tailscale funnel --bg --https=8443 --set-path=/{$} http://127.0.0.1:1880 > /dev/null
