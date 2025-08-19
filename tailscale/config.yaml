@@ -40,9 +40,7 @@ schema:
   proxy: bool?
   proxy_and_funnel_port: match(^(443|8443|10000)$)?
   url_mapping:
-    - "match(^(([1-9])?([0-9])?([0-9])?([0-9])?):{1}/{1}[a-z]+)"
-  proxy_8443: "match(^http://127.0.0.1:\\d{1,4}$)?"
-  proxy_10000: "match(^http://127.0.0.1:\\d{1,4}$)?"
+    - "match(^([0-9]{1,5}):\/[a-z0-9_\-\/]+$)"
   snat_subnet_routes: bool?
   stateful_filtering: bool?
   tags:
