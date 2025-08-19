@@ -52,7 +52,7 @@ fi
 if ! bashio::config.true 'funnel'; then
   tailscale_command=serve
 else
-  # Check if Funnel is available
+   #Check if Funnel is available
   if ! /opt/tailscale status --self=true --peers=false --json \
     | jq -rce '.Self.CapMap | has("funnel")' > /dev/null;
   then
@@ -62,36 +62,9 @@ else
   tailscale_command=funnel
 fi
 
-
-if  ! bashio::config.is_empty "proxy_8443"  &&  bashio::config.true "funnel"  ; then
-  if  /opt/tailscale status | grep -q "net:8443"  ; then
-    if !  /opt/tailscale funnel status | grep -q "$(bashio::config "proxy_8443")"  ; then
-      /opt/tailscale funnel --https=8443 off
-      exec /opt/tailscale ${tailscale_command} --bg --https=8443 --set-path=/ $(bashio::config "proxy_8443")
-    fi
-  else
-    exec /opt/tailscale ${tailscale_command} --bg --https=8443 --set-path=/ $(bashio::config "proxy_8443") 
-  fi  
-fi
-
-if !  bashio::config.is_empty "proxy_10000"  &&  bashio::config.true "funnel"  ; then
-  if  /opt/tailscale status | grep -q "net:10000"  ; then
-    if !  /opt/tailscale funnel status | grep -q "$(bashio::config "proxy_10000")"  ; then
-      /opt/tailscale funnel --https=10000 off
-      exec /opt/tailscale ${tailscale_command} --bg --https=10000 --set-path=/ $(bashio::config "proxy_10000")
-    fi
-  else
-    exec /opt/tailscale ${tailscale_command} --bg --https=10000 --set-path=/ $(bashio::config "proxy_10000")
-  fi  
-fi
+/opt/tailscale funnel --bg --https=10000 --set-path=/ http://127.0.0.1:5000 > /dev/null
+/opt/tailscale funnel --bg --https=10000 --set-path=/nodered/ http://127.0.0.1:1880 > /dev/null
+/opt/tailscale funnel --bg --https=10000 --set-path=/graf/ http://127.0.0.1:3000 > /dev/null
 
 # Set up serve
 exec /opt/tailscale ${tailscale_command} --https=$(bashio::config "proxy_and_funnel_port" "443") --set-path=/ "http://127.0.0.1:$(bashio::core.port)"
-
-if bashio::config.true 'reverse_proxy'; then
-  echo "The code is executed"
-  exec /opt/tailscale ${tailscale_command} --https=8443 --set-path=/ $(bashio::config "proxy_8443")
-  exec /opt/tailscale ${tailscale_command} --https=10000 --set-path=/ $(bashio::config "proxy_10000")
-  exec /opt/tailscale ${tailscale_command} --https=10000 --set-path=/graf/ http://127.0.0.1:3000
-fi
-echo $(bashio::config.true 'reverse_proxy')
