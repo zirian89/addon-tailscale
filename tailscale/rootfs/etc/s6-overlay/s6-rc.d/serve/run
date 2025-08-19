@@ -52,7 +52,7 @@ fi
 if ! bashio::config.true 'funnel'; then
   tailscale_command=serve
 else
-   #Check if Funnel is available
+  # Check if Funnel is available
   if ! /opt/tailscale status --self=true --peers=false --json \
     | jq -rce '.Self.CapMap | has("funnel")' > /dev/null;
   then
@@ -62,9 +62,81 @@ else
   tailscale_command=funnel
 fi
 
-/opt/tailscale funnel --bg --https=10000 --set-path=/ http://127.0.0.1:5000 > /dev/null
-/opt/tailscale funnel --bg --https=10000 --set-path=/nodered/ http://127.0.0.1:1880 > /dev/null
-/opt/tailscale funnel --bg --https=10000 --set-path=/graf/ http://127.0.0.1:3000 > /dev/null
+# ------------------------------------------------------------------------------
+# Build tailscale serve/funnel command arguments:
+# - Always map root "/" to local 127.0.0.1:8123 (Home Assistant default)
+# - Use configured --https port (proxy_and_funnel_port) as before
+# - Iterate /data/options.json services[] array and add each --set-path mapping
+#   expected service formats:
+#     - object: { "path": "/nodered", "port": 8443 }
+#     - string: "8443:/nodered"
+# ------------------------------------------------------------------------------
 
-# Set up serve
-exec /opt/tailscale ${tailscale_command} --https=$(bashio::config "proxy_and_funnel_port" "443") --set-path=/ "http://127.0.0.1:$(bashio::core.port)"
+CONFIG_JSON='/data/options.json'
+FUND_PORT="$(bashio::config "proxy_and_funnel_port" "443")"
+
+# Build args array: first element is the subcommand (serve|funnel)
+ARGS=( "${tailscale_command}" "--https=${FUND_PORT}" )
+
+# Always serve HA default 8123 at root path "/"
+# (user-requested behavior: default 8123 on root /)
+ARGS+=( "--set-path=/" "http://127.0.0.1:8123" )
+bashio::log.info "Added mapping: / -> 127.0.0.1:8123"
+
+# If jq not present, warn and skip dynamic services. jq is commonly present in the add-on dev image,
+# but if not, either add it to the Dockerfile (apk add --no-cache jq) or switch to another parsing method.
+if ! command -v jq >/dev/null 2>&1; then
+  bashio::log.warning "jq not found; skipping additional service mappings defined in services[]. To enable, include 'jq' in the add-on image."
+else
+  # If services key exists and is an array, iterate entries
+  if jq -e '.services and ( .services | type == "array")' "${CONFIG_JSON}" >/dev/null 2>&1; then
+    # iterate items without invoking subshell that would lose variable scope:
+    # use read -r line in process substitution
+    while IFS= read -r item; do
+      # determine json type
+      item_type=$(echo "${item}" | jq -r 'type' 2>/dev/null || echo "null")
+
+      PORT_VAL=""
+      PATH_VAL=""
+
+      if [ "${item_type}" = "object" ]; then
+        PORT_VAL=$(echo "${item}" | jq -r '.port // empty' 2>/dev/null)
+        PATH_VAL=$(echo "${item}" | jq -r '.path // empty' 2>/dev/null)
+      elif [ "${item_type}" = "string" ]; then
+        # remove surrounding quotes if present (jq -c emits them for strings)
+        pair=$(echo "${item}" | sed -e 's/^"//' -e 's/"$//')
+        # expected format "port:/path" (port first)
+        PORT_VAL=$(printf '%s' "${pair}" | cut -d: -f1)
+        PATH_VAL=$(printf '%s' "${pair}" | cut -d: -f2-)
+      else
+        bashio::log.warning "Skipping unsupported service entry (not object/string): ${item}"
+        continue
+      fi
+
+      # basic validation
+      if [ -z "${PORT_VAL}" ] || [ -z "${PATH_VAL}" ]; then
+        bashio::log.warning "Skipping service with missing port or path: ${item}"
+        continue
+      fi
+
+      # normalize path (ensure leading slash)
+      case "${PATH_VAL}" in
+        /*) ;; # ok
+        *) PATH_VAL="/${PATH_VAL}" ;;
+      esac
+
+      # add mapping argument(s) for tailscale
+      ARGS+=( "--set-path=${PATH_VAL}" "http://127.0.0.1:${PORT_VAL}" )
+      bashio::log.info "Added mapping: ${PATH_VAL} -> 127.0.0.1:${PORT_VAL}"
+
+    done < <(jq -c '.services[]' "${CONFIG_JSON}")
+  else
+    bashio::log.info "No services array found in ${CONFIG_JSON}; only root mapping will be served."
+  fi
+fi
+
+# Exec tailscale with the built arguments (replace current process)
+# Example final invocation:
+# /opt/tailscale serve --https=443 --set-path=/ http://127.0.0.1:8123 --set-path=/nodered http://127.0.0.1:8443 ...
+bashio::log.info "Starting /opt/tailscale ${ARGS[*]}"
+exec /opt/tailscale "${ARGS[@]}"
